@@ -299,6 +299,9 @@ td {
 .add-btn:active {
   transform: scale(0.98);
 }
+.mobile-menu-icon {
+  display: none;
+}
 
 @media (max-width: 768px) {
   .dashboard {
