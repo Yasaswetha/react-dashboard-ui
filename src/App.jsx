@@ -1,152 +1,393 @@
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import "./App.css";
+
 function App() {
-  const cards = [
-    { title: "Total Users", value: "1,250", icon: "👥" },
-    { title: "Revenue", value: "$12,400", icon: "💰" },
-    { title: "Projects", value: "18", icon: "📁" },
-    { title: "Tasks", value: "42", icon: "✅" },
+  const [activePage, setActivePage] = useState("Home");
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const [showProjectForm, setShowProjectForm] =
+    useState(false);
+
+  const [projectName, setProjectName] =
+    useState("");
+
+  const [projectStatus, setProjectStatus] =
+    useState("");
+
+  const [projectProgress, setProjectProgress] =
+    useState("");
+
+  const [projects, setProjects] = useState([
+    ["Portfolio Website", "Completed", "100%"],
+
+    ["Dashboard UI", "In Progress", "75%"],
+
+    ["React Login UI", "Completed", "100%"],
+  ]);
+
+  const menuItems = [
+    { name: "Home", icon: "🏠" },
+
+    { name: "Analytics", icon: "📊" },
+
+    { name: "Projects", icon: "📁" },
+
+    { name: "Settings", icon: "⚙️" },
   ];
 
-  const projects = [
-    ["Portfolio Website", "Completed", "100%"],
-    ["Dashboard UI", "In Progress", "75%"],
-    ["React Login UI", "Completed", "100%"],
+  const cards = [
+    {
+      title: "Total Users",
+      value: "1,250",
+      icon: "👥",
+    },
+
+    {
+      title: "Revenue",
+      value: "$12,400",
+      icon: "💰",
+    },
+
+    {
+      title: "Projects",
+      value: projects.length,
+      icon: "📁",
+    },
+
+    {
+      title: "Tasks",
+      value: "42",
+      icon: "✅",
+    },
   ];
+
+  const handleAddProject = () => {
+    if (
+      !projectName ||
+      !projectStatus ||
+      !projectProgress
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    setProjects([
+      ...projects,
+      [
+        projectName,
+        projectStatus,
+        projectProgress,
+      ],
+    ]);
+
+    setProjectName("");
+    setProjectStatus("");
+    setProjectProgress("");
+
+    setShowProjectForm(false);
+
+    setActivePage("Projects");
+  };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        fontFamily: "Arial",
-        background:
-          "linear-gradient(135deg, #020617 0%, #0f172a 50%, #111827 100%)",
-        color: "white",
-      }}
-    >
-      <aside
-        style={{
-          width: "260px",
-          background: "rgba(15, 23, 42, 0.8)",
-          backdropFilter: "blur(12px)",
-          padding: "30px",
-          borderRight: "1px solid rgba(148,163,184,0.2)",
-        }}
-      >
-        <h2 style={{ color: "#38bdf8", marginBottom: "50px" }}>
-          ⚡ DashPro
-        </h2>
+    <div className="dashboard">
+      {/* Mobile Menu Icon */}
 
-        {["🏠 Home", "📊 Analytics", "📁 Projects", "⚙️ Settings"].map(
-          (item) => (
-            <p
-              style={{
-                padding: "14px 18px",
-                borderRadius: "12px",
-                marginBottom: "15px",
-                background:
-                  item.includes("Home") ? "rgba(56,189,248,0.15)" : "none",
-                color: item.includes("Home") ? "#38bdf8" : "white",
-                cursor: "pointer",
+      <div
+        className="mobile-menu-icon"
+        onClick={() =>
+          setMenuOpen(!menuOpen)
+        }
+      >
+        {menuOpen ? (
+          <FaTimes />
+        ) : (
+          <FaBars />
+        )}
+      </div>
+
+      {/* Sidebar */}
+
+      <aside
+        className={
+          menuOpen
+            ? "sidebar mobile-active"
+            : "sidebar"
+        }
+      >
+        <h2 className="logo">⚡ DashBoard</h2>
+
+        <div className="menu">
+          {menuItems.map((item) => (
+            <button
+              key={item.name}
+              className={
+                activePage === item.name
+                  ? "menu-item active"
+                  : "menu-item"
+              }
+              onClick={() => {
+                setActivePage(item.name);
+                setMenuOpen(false);
               }}
             >
-              {item}
-            </p>
-          )
-        )}
+              <span>{item.icon}</span>
+
+              {item.name}
+            </button>
+          ))}
+        </div>
       </aside>
 
-      <main style={{ flex: 1, padding: "40px" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "35px",
-          }}
-        >
+      {/* Main */}
+
+      <main className="main">
+        <div className="topbar">
           <div>
-            <h1 style={{ fontSize: "46px", marginBottom: "5px",color: "white" }}>
-              Admin Dashboard
-            </h1>
-            <p style={{ color: "#94a3b8" }}>
-              Welcome back, manage your projects easily.
+            <h1>{activePage}</h1>
+
+            <p>
+              Welcome back, manage your
+              work easily.
             </p>
           </div>
 
           <button
-            style={{
-              background: "#38bdf8",
-              border: "none",
-              padding: "14px 24px",
-              borderRadius: "12px",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
+            className="new-btn"
+            onClick={() =>
+              setShowProjectForm(
+                !showProjectForm
+              )
+            }
           >
             + New Project
           </button>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "22px",
-          }}
-        >
-          {cards.map((card) => (
-            <div
-              style={{
-                background: "rgba(30, 41, 59, 0.85)",
-                padding: "28px",
-                borderRadius: "20px",
-                border: "1px solid rgba(148,163,184,0.2)",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-              }}
+        {/* Project Form */}
+
+        {showProjectForm && (
+          <div className="project-form">
+            <input
+              type="text"
+              placeholder="Project Name"
+              value={projectName}
+              onChange={(e) =>
+                setProjectName(
+                  e.target.value
+                )
+              }
+            />
+
+            <input
+              type="text"
+              placeholder="Status"
+              value={projectStatus}
+              onChange={(e) =>
+                setProjectStatus(
+                  e.target.value
+                )
+              }
+            />
+
+            <input
+              type="text"
+              placeholder="Progress"
+              value={projectProgress}
+              onChange={(e) =>
+                setProjectProgress(
+                  e.target.value
+                )
+              }
+            />
+
+            <button
+              className="add-btn"
+              onClick={handleAddProject}
             >
-              <div style={{ fontSize: "32px", marginBottom: "15px" }}>
-                {card.icon}
-              </div>
-              <h3 style={{ color: "#38bdf8" }}>{card.title}</h3>
-              <h1 style={{ fontSize: "42px",color: "white"}}>{card.value}</h1>
-            </div>
-          ))}
-        </div>
+              Save Project
+            </button>
+          </div>
+        )}
 
-        <div
-          style={{
-            marginTop: "40px",
-            background: "rgba(30, 41, 59, 0.85)",
-            padding: "28px",
-            borderRadius: "20px",
-            border: "1px solid rgba(148,163,184,0.2)",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-          }}
-        >
-          <h2 style={{ color: "#38bdf8", marginBottom: "20px" }}>
-            Recent Projects
-          </h2>
+        {/* Home */}
 
-          <table style={{ width: "100%", color: "white" }}>
-            <thead>
-              <tr>
-                <th align="left">Project</th>
-                <th align="left">Status</th>
-                <th align="left">Progress</th>
-              </tr>
-            </thead>
+        {activePage === "Home" && (
+          <>
+            <div className="cards-grid">
+              {cards.map((card) => (
+                <div
+                  className="stat-card"
+                  key={card.title}
+                >
+                  <div className="card-icon">
+                    {card.icon}
+                  </div>
 
-            <tbody>
-              {projects.map((project) => (
-                <tr>
-                  <td style={{ padding: "16px 0" }}>{project[0]}</td>
-                  <td>{project[1]}</td>
-                  <td>{project[2]}</td>
-                </tr>
+                  <h3>{card.title}</h3>
+
+                  <h2>{card.value}</h2>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
+
+            <div className="content-card">
+              <h2>Overview</h2>
+
+              <p>
+                Your dashboard is
+                performing well. Active
+                frontend projects are
+                progressing smoothly.
+              </p>
+
+              <div className="overview-boxes">
+                <div>
+                  <h3>85%</h3>
+                  <p>Performance</p>
+                </div>
+
+                <div>
+                  <h3>72%</h3>
+                  <p>Productivity</p>
+                </div>
+
+                <div>
+                  <h3>98%</h3>
+                  <p>UI Quality</p>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Analytics */}
+
+        {activePage === "Analytics" && (
+          <div className="content-card">
+            <h2>Analytics Report</h2>
+
+            <div className="analytics-grid">
+              <div className="analytics-box">
+                <h3>Website Traffic</h3>
+
+                <div className="bar">
+                  <span
+                    style={{
+                      width: "85%",
+                    }}
+                  ></span>
+                </div>
+
+                <p>
+                  85% increased this
+                  month
+                </p>
+              </div>
+
+              <div className="analytics-box">
+                <h3>User Engagement</h3>
+
+                <div className="bar">
+                  <span
+                    style={{
+                      width: "70%",
+                    }}
+                  ></span>
+                </div>
+
+                <p>70% active users</p>
+              </div>
+
+              <div className="analytics-box">
+                <h3>Project Growth</h3>
+
+                <div className="bar">
+                  <span
+                    style={{
+                      width: "92%",
+                    }}
+                  ></span>
+                </div>
+
+                <p>92% growth rate</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Projects */}
+
+        {activePage === "Projects" && (
+          <div className="content-card">
+            <h2>Recent Projects</h2>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Project</th>
+
+                  <th>Status</th>
+
+                  <th>Progress</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {projects.map(
+                  (project, index) => (
+                    <tr key={index}>
+                      <td>{project[0]}</td>
+
+                      <td>
+                        <span className="status">
+                          {project[1]}
+                        </span>
+                      </td>
+
+                      <td>{project[2]}</td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Settings */}
+
+        {activePage === "Settings" && (
+          <div className="content-card">
+            <h2>
+              Profile Settings
+            </h2>
+
+            <form className="settings-form">
+              <input
+                type="text"
+                placeholder="Your Name"
+              />
+
+              <input
+                type="email"
+                placeholder="Your Email"
+              />
+
+              <input
+                type="text"
+                placeholder="Role"
+              />
+
+              <textarea placeholder="Short Bio"></textarea>
+
+              <button type="button">
+                Save Changes
+              </button>
+            </form>
+          </div>
+        )}
       </main>
     </div>
   );
